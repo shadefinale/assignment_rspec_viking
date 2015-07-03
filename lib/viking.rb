@@ -2,6 +2,8 @@ require_relative 'weapons/axe'
 require_relative 'weapons/bow'
 require_relative 'weapons/fists'
 
+require 'pry'
+
 class Viking
   attr_reader :health, :strength, :name, :weapon
 
@@ -47,6 +49,7 @@ class Viking
       @weapon.use * @strength
     rescue Exception => e
       puts "You could not use your weapon because #{e.message}"
+      #binding.pry
       damage_with_fists
     end
   end
@@ -68,15 +71,15 @@ class Viking
 end
 
 # Run script
-oleg = Viking.new("Oleg")
-sven = Viking.new("Sven")
-oleg.attack(sven)
-oleg.pick_up_weapon(Bow.new(2))
-3.times { oleg.attack(sven) }
-sven.attack(oleg)
-sven.pick_up_weapon(Axe.new)
-3.times {sven.attack(oleg)}
-puts "\nInspecting vikings:\n"
-puts oleg.inspect
-puts sven.inspect
-puts "\n...thanks for playing.\n\n"
+# oleg = Viking.new("Oleg")
+# sven = Viking.new("Sven")
+# oleg.attack(sven)
+# oleg.pick_up_weapon(Bow.new(2))
+# 3.times { oleg.attack(sven) }
+# sven.attack(oleg)
+# sven.pick_up_weapon(Axe.new)
+# 3.times {sven.attack(oleg)}
+# puts "\nInspecting vikings:\n"
+# puts oleg.inspect
+# puts sven.inspect
+# puts "\n...thanks for playing.\n\n"

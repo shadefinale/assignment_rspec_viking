@@ -15,7 +15,8 @@ describe Viking do
     end
 
     it 'should have unmodifyable health' do
-      expect(viking).not_to respond_to(:health=)
+      ##expect(viking).not_to respond_to(:health=)
+      expect{viking.health=30}.to raise_error(NoMethodError)
     end
 
     it 'should start with nil weapon' do
@@ -27,18 +28,18 @@ describe Viking do
   describe "#pick_up_weapon" do
 
     it 'should be able to pick up weapons' do
-      expect(viking.weapon).to be_nil
       viking.pick_up_weapon(Bow.new)
       expect(viking.weapon).to be_a(Bow)
     end
 
     it 'should not be able to pick up strings' do
-      expect{viking.pick_up_weapon("Machete")}.to raise_error
+      expect{
+        viking.pick_up_weapon("Machete")
+        }.to raise_error("Can't pick up that thing")
     end
 
     it 'should be able to pick up a new weapon' do
       viking.pick_up_weapon(Axe.new)
-      expect(viking.weapon).to be_a(Axe)
       viking.pick_up_weapon(Bow.new)
       expect(viking.weapon).to be_a(Bow)
     end
@@ -48,7 +49,6 @@ describe Viking do
 
     it 'should be able to drop_weapon' do
       new_viking = Viking.new("Joey", 99, 10, Bow.new)
-      expect(new_viking.weapon).to be_a(Bow)
       new_viking.drop_weapon
       expect(new_viking.weapon).to be_nil
     end
@@ -85,7 +85,6 @@ describe Viking do
     it 'should call "damage with fists" when there is no weapon' do
       expect(viking_attacker).to receive(:damage_with_fists).and_return(30)
       viking_attacker.attack(viking_defender)
-      expect(viking_defender.health).to eq(375)
     end
 
     it 'should deal proper damage when there is no weapon' do
@@ -100,7 +99,6 @@ describe Viking do
       it 'should call "damage with weapon when there is a weapon' do
         expect(viking_axeman).to receive(:damage_with_weapon).and_return(5)
         viking_axeman.attack(viking_defender)
-        expect(viking_defender.health).to eq(400)
       end
 
       it 'should deal damage equal to the attacker strength times the weapon multiplier (axe)' do
@@ -117,12 +115,8 @@ describe Viking do
         3.times do
           viking_archer.attack(viking_defender)
         end
-
-        expect(viking_defender.health).to eq(345)
-
+        expect(viking_archer).to receive(:damage_with_fists).and_return(1)
         viking_archer.attack(viking_defender)
-
-        expect(viking_defender.health).to eq(342.5)
       end
 
     end
@@ -135,6 +129,14 @@ describe Viking do
         end
 
         expect{viking_attacker.attack(viking_defender)}.to raise_error("Sandbag has Died...")
+      end
+
+      it 'should not raise error if it did not take enough damage to die' do
+        19.times do
+          viking_attacker.attack(viking_defender)
+        end
+
+        expect{viking_attacker.attack(viking_defender)}.not_to raise_error
       end
     end
   end
